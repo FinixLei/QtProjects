@@ -1,0 +1,1 @@
+A very simple project to test QtPlugin, loading QtPlugin and connect signal after loading QtPlugin. 
