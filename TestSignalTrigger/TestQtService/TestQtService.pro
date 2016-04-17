@@ -20,6 +20,14 @@ LIBS += \
     -lPluginOne \
     -lPluginTwo
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    mydaemon.cpp \
+    myservice.cpp \
+    message_handler.cpp
 
 include(qtservice/src/qtservice.pri)
+
+HEADERS += \
+    mydaemon.h \
+    myservice.h \
+    message_handler.h
