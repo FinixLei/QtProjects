@@ -11,3 +11,5 @@ How to handle the service?
 
 In the folder "qtservice", we use the 3rd party library/source qtsolution/qtservice. 
 You can refer to qtsolution here: https://github.com/qtproject/qt-solutions
+
+Log is at C:\Windows\System32\MyService.log
