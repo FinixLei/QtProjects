@@ -1,51 +1,7 @@
-#include "mydaemon.h"
 #include <QDebug>
+#include <QProcess>
 
-#ifdef Q_OS_WIN
-#include <Windows.h>
-#include <WtsApi32.h>
-#include <WinBase.h>
-#endif
-
-#ifdef Q_OS_WIN
-
-BOOL CreateMyProcess(LPWSTR fullPath)
-{
-    HANDLE hTokenDup = NULL;
-
-    ULONG sessionId = WTSGetActiveConsoleSessionId();
-    if (!WTSQueryUserToken(sessionId, &hTokenDup))
-    {
-        DWORD error = GetLastError();
-        qDebug() << "Last Error = " << error;
-        return FALSE;
-    }
-
-    STARTUPINFO si;
-    PROCESS_INFORMATION pi;
-    ZeroMemory(&si, sizeof(STARTUPINFO));
-    ZeroMemory(&pi, sizeof(PROCESS_INFORMATION));
-    si.cb = sizeof(STARTUPINFO);
-    si.lpDesktop = NULL; // L"WinSta0\\Default";
-
-    qDebug() << "Before CreateProcessAsUser()";
-
-    LPVOID pEnv = NULL;
-    BOOL createResult = CreateProcessAsUser(hTokenDup, NULL, fullPath, NULL, NULL, FALSE,
-        NORMAL_PRIORITY_CLASS | CREATE_NEW_CONSOLE, pEnv, NULL, &si, &pi);
-
-    qDebug() << "Done with CreateProcessAsUser(), result = " << createResult;
-
-    DWORD error = GetLastError();
-    qDebug() << "Last Error = " << error;
-
-    CloseHandle(pi.hProcess);
-    CloseHandle(pi.hThread);
-    CloseHandle(hTokenDup);
-    return TRUE;
-}
-
-#endif
+#include "mydaemon.h"
 
 
 MyDaemon::MyDaemon()
@@ -78,7 +34,10 @@ void MyDaemon::resume() {
 void MyDaemon::startProcess() {
     qDebug() << "Start Process......";
 
-#ifdef Q_OS_WIN
-    CreateMyProcess(L"notepad.exe");
-#endif
+    QStringList parameters;
+    parameters << "1.txt";
+
+    // Do not use "system()" or "QProcess::execute()" or "QProcess.start()"
+    // This is because they will suspend the execution of the service.
+    QProcess::startDetached("notepad.exe", parameters);
 }

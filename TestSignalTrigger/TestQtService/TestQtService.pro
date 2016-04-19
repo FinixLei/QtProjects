@@ -18,9 +18,7 @@ INCLUDEPATH += \
 LIBS += \
     -L$$DESTDIR \
     -lPluginOne \
-    -lPluginTwo \
-    -lWtsApi32 \
-    -lAdvApi32
+    -lPluginTwo
 
 SOURCES += main.cpp \
     mydaemon.cpp \
