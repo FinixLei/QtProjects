@@ -48,10 +48,8 @@ BOOL launchGUIApplication(std::wstring app, std::vector<std::wstring>params)
 
             TCHAR path[MAX_PATH];
             _tcscpy_s(path, MAX_PATH, app.c_str());
-            // _tcscpy_s(path, MAX_PATH, L"C:\\CameraWorkTool\\release\\FortisDesktopContainer.exe");
 
             TCHAR commandLine[MAX_PATH];
-            // _tcscpy_s(commandLine, MAX_PATH, L"C:\\CameraWorkTool\\release\\FortisDesktopContainer.exe --app_id=F821976C-02E9-4835-99E2-5D32704EF4D4");
             _tcscpy_s(commandLine, MAX_PATH, L" ");
             for (auto item : params) {
                 _tcscat_s(commandLine, MAX_PATH, item.c_str());
