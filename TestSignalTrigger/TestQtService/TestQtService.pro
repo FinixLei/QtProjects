@@ -3,13 +3,15 @@ include(../TestSignalTrigger.pri)
 QT += core network
 QT -= gui
 
-CONFIG += c++11
-
 TARGET = TestQtService
+TEMPLATE = app
+
+CONFIG += c++11
 CONFIG += console
 CONFIG -= app_bundle
 
-TEMPLATE = app
+DEFINES += _UNICODE
+
 
 INCLUDEPATH += \
     $$PWD/../PluginOne \
@@ -18,7 +20,11 @@ INCLUDEPATH += \
 LIBS += \
     -L$$DESTDIR \
     -lPluginOne \
-    -lPluginTwo
+    -lPluginTwo \
+    -L$$PWD/windows_libs \
+    -lWtsApi32 \
+    -lAdvApi32 \
+    -lUserEnv
 
 SOURCES += main.cpp \
     mydaemon.cpp \

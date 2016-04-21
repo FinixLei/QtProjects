@@ -21,4 +21,6 @@ Since Windows Vista, Windows Service does not support start a GUI application. A
 http://stackoverflow.com/questions/5063731/is-there-any-way-to-start-a-gui-application-from-a-windows-service-on-windows-7
 https://msdn.microsoft.com/en-us/library/windows/desktop/ms683502(v=vs.85).aspx
 
+However, in the practice, Windows Service actually is able to start an application with GUI, e.g. notepad.exe. Please refer to launchGUIApplication() in mydaemon.cpp. 
+
 This article also contains interesting points: http://blog.csdn.net/nirendao/article/details/51194003
