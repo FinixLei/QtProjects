@@ -20,7 +20,10 @@
 
 int main(int argc, char **argv)
 {
-    qInstallMessageHandler(MessageOutput);
+#ifdef Q_OS_WIN
+    MessageHandler::setLogFile("C:/MyService.log");
+#endif
+    qInstallMessageHandler(MessageHandler::FormatMessage);
 
 #if !defined(Q_OS_WIN)
     // QtService stores service settings in SystemScope, which normally require root privileges.

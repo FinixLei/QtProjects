@@ -29,11 +29,13 @@ LIBS += \
 SOURCES += main.cpp \
     mydaemon.cpp \
     myservice.cpp \
-    message_handler.cpp
+    message_handler.cpp \
+    process_loader.cpp
 
 include(qtservice/src/qtservice.pri)
 
 HEADERS += \
     mydaemon.h \
     myservice.h \
-    message_handler.h
+    message_handler.h \
+    process_loader.h

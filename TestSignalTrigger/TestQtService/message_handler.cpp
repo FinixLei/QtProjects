@@ -3,16 +3,23 @@
 #include <QDateTime>
 #include <QTextStream>
 #include <QFile>
-#include <QMessageLogContext>
-#include <Qt>
 
-QFile logFile("MyService.log");
+#include "message_handler.h"
 
-void MessageOutput(QtMsgType type , const QMessageLogContext &context , const QString &msg)
+
+QString MessageHandler::s_log = "C:/MyService.log";
+
+void MessageHandler::setLogFile(QString file)
+{
+    s_log = file;
+}
+
+void MessageHandler::FormatMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     static QMutex mutex;
     mutex.lock();
 
+    QFile logFile(MessageHandler::s_log);
     logFile.open(QIODevice::WriteOnly | QIODevice::Append);
 
     QString log("");

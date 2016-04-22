@@ -1,10 +1,20 @@
-#ifndef MESSAGEHANDLER_HPP
-#define MESSAGEHANDLER_HPP
+#ifndef MESSAGEHANDLER_H
+#define MESSAGEHANDLER_H
 
 #include <QFile>
-#include <QDebug>
 
-void MessageOutput(QtMsgType type , const QMessageLogContext &context , const QString &msg);
+class MessageHandler
+{
+private:
+    MessageHandler();
+    ~MessageHandler();
+
+public:
+    static void setLogFile(QString file = "SproutMonitorService.log");
+    static void FormatMessage(QtMsgType type , const QMessageLogContext &context , const QString &msg);
+
+private:
+    static QString s_log;
+};
 
 #endif // MESSAGEHANDLER_HPP
-
