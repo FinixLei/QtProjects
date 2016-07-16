@@ -1,0 +1,11 @@
+# This is a comment line. 
+
+C:/Users/Finix/AppData/Local/Fortis/bin/proapi_touchmat-0.2.3/win32-msvc2013-x64-d/touchmat2.dll
+
+C:\\Users\\Finix\\AppData\\Local\\Fortis\\bin\\proapi_hal-0.2.3\\win32-msvc2013-x64-d\\hal.dll
+
+C:/Users/Finix/AppData/Local/Fortis/bin/proapi_leds-0.2.3/win32-msvc2013-x64-d/leds.dll
+
+C:\\Users\\Finix\\AppData\\Local\\Fortis\\bin\\proapi_hal-0.2.3\\win32-msvc2013-x64-d\\hal.dll
+
+C:/Users/Finix/AppData/Local/Fortis/bin/proapi_touchmat-0.2.3/win32-msvc2013-x64-d/touchmat.dll
