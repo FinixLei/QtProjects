@@ -1,5 +1,6 @@
 #include <QCoreApplication>
 #include <QFile>
+#include <QFileInfo>
 #include <QDebug>
 #include <QPluginLoader>
 #include <QVector>
@@ -11,7 +12,7 @@ void readDependencyConfigFile(const QString& filePath, QVector<QString>& vec)
     QFile file(filePath);
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-       qDebug() << "Warning: Cannot open " << filePath;
+       qCritical() << "Warning: Cannot open " << filePath;
     }
 
     QTextStream in(&file);
@@ -91,7 +92,7 @@ void loadLibrariesAsQtPlugin(const QString& configFile)
 }
 
 
-void loadLibrariesAsNormal(const QString& configFile)
+void loadLibraries(const QString& configFile)
 {
     QVector<QString> libraryList;
     readDependencyConfigFile(configFile, libraryList);
@@ -102,18 +103,26 @@ void loadLibrariesAsNormal(const QString& configFile)
 
         if(goodLibPath(libPath))
         {
-            qDebug() << ">>>>>>>>>> " << "Loading normal library: " << libPath << "............";
-            QLibrary lib(libPath);
-            if (!lib.load())
+            QFileInfo fi(libPath);
+            QString fileName = fi.fileName();
+
+            if (fileName == "touchmat.dll")
             {
-                qCritical() << "Failed to load: " << libPath;
+                qDebug() << ">>>>>>>>> " << "Loading QtPlugin: " << libPath << ".............";
+                loadQtPlugin(libPath);
             }
+            else
+            {
+                qDebug() << ">>>>>>>>>> " << "Loading normal library: " << libPath << "............";
+                QLibrary lib(libPath);
+                if (!lib.load())
+                {
+                    qCritical() << "Failed to load: " << libPath;
+                }
+            }
+
+            qDebug() << "";
         }
-        else
-        {
-            qCritical() << "Ignore the line: " << libPath;
-        }
-        qDebug() << "";
     }
 }
 
@@ -137,7 +146,7 @@ int main(int argc, char *argv[])
     QString configFile = "C:/Users/Finix/Desktop/dependencyList.txt";
 
     // loadLibrariesAsQtPlugin(configFile);
-    loadLibrariesAsNormal(configFile);
+    loadLibraries(configFile);
 
     return 0;
 }
