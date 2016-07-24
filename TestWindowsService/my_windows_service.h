@@ -14,6 +14,11 @@ protected:
     void resume();
     void stop();
 
+private:
+    void MyWindowsService::installMessageHandler();
+    void MyWindowsService::way1_GetUserNameByEnvVar();
+    void MyWindowsService::way2_GetHomeLocationByQStandardPaths();
+    void MyWindowsService::way3_GetUserNameByGetUserNameWindowsAPI();
 };
 
 #endif // MYWINDOWSSERVICE_H

@@ -19,12 +19,10 @@ MyWindowsService::MyWindowsService(int argc, char** argv)
     setServiceFlags(QtServiceBase::CanBeSuspended);
 }
 
-void MyWindowsService::start()
+
+void MyWindowsService::installMessageHandler()
 {
-    qDebug() << "Get into start().......";
-
     // Install Message Handler
-
     QString logDirName = "C:/ProgramData/MyWindowsService";
     QDir logDir(logDirName);
 
@@ -42,15 +40,40 @@ void MyWindowsService::start()
         message_handler::MessageHandler::setLogFile(logFile);
         qInstallMessageHandler(message_handler::MessageHandler::FormatMessage);
     #endif
+}
 
-    qInfo() << "Start MyWindowsService...";
+
+void MyWindowsService::way1_GetUserNameByEnvVar()
+{
+    // In the system level process/service,
+    // the APPDATA is
+    // the UserName is "<HostName>$", e.g. "FINIX-LAPTOP$".
+
+    qInfo() << "Way 1 - Get User Name via Environment Variable...";
     qInfo() << "APPDATA = " << qgetenv("APPDATA");
     qInfo() << "User Name = " << qgetenv("UserName");
+    qInfo() << "---------------------------";
+}
 
+
+void MyWindowsService::way2_GetHomeLocationByQStandardPaths()
+{
+    // Output: "C:/Windows/system32/config/systemprofile"
+
+    qInfo() << "Way 2 - Get User Name via QStandardPaths...";
     QStringList homePath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
     qDebug() << homePath.first().split(QDir::separator()).last();
+    qInfo() << "---------------------------";
+}
 
+
+void MyWindowsService::way3_GetUserNameByGetUserNameWindowsAPI()
+{
     #ifdef Q_OS_WIN
+    // Output: Windows User Name = "SYSTEM"
+
+        qInfo() << "Way 3 - Get User Name via Windows API GetUserName()...";
+
         wchar_t acUserName[200];
         DWORD nUserName = sizeof(acUserName);
         if (GetUserName(acUserName, &nUserName))
@@ -67,6 +90,22 @@ void MyWindowsService::start()
         });
         process.start("whoami");
     #endif
+    qInfo() << "---------------------------";
+}
+
+
+void MyWindowsService::start()
+{
+    // Only for "-e" option, as message handler has not been installed
+    qDebug() << "Get into start().......";
+
+    installMessageHandler();
+
+    qInfo() << "Start MyWindowsService...";
+
+    way1_GetUserNameByEnvVar();
+    way2_GetHomeLocationByQStandardPaths();
+    way3_GetUserNameByGetUserNameWindowsAPI();
 }
 
 void MyWindowsService::stop()
