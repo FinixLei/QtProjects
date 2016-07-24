@@ -21,7 +21,9 @@ CONFIG(debug, debug|release) {
             -lQtSolutions_Service-head
 }
 
-LIBS += -ladvapi32
+LIBS += -ladvapi32 \
+        -lkernel32 \
+        -lWtsapi32
 
 INCLUDEPATH += $$PWD/qt-service-lib/include
 

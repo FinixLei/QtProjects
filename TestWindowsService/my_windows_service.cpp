@@ -7,6 +7,7 @@
 
 #ifdef Q_OS_WIN
 #include <windows.h>
+#include <Wtsapi32.h>
 #endif
 
 #include <QProcess>
@@ -43,36 +44,23 @@ void MyWindowsService::installMessageHandler()
 }
 
 
-void MyWindowsService::way1_GetUserNameByEnvVar()
+void MyWindowsService::way1_GetUserNameByQT()
 {
     // In the system level process/service,
-    // the APPDATA is
     // the UserName is "<HostName>$", e.g. "FINIX-LAPTOP$".
 
-    qInfo() << "Way 1 - Get User Name via Environment Variable...";
-    qInfo() << "APPDATA = " << qgetenv("APPDATA");
+    qInfo() << "Way 1 - Get User Name via QT...";
     qInfo() << "User Name = " << qgetenv("UserName");
     qInfo() << "---------------------------";
 }
 
 
-void MyWindowsService::way2_GetHomeLocationByQStandardPaths()
-{
-    // Output: "C:/Windows/system32/config/systemprofile"
-
-    qInfo() << "Way 2 - Get User Name via QStandardPaths...";
-    QStringList homePath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
-    qDebug() << homePath.first().split(QDir::separator()).last();
-    qInfo() << "---------------------------";
-}
-
-
-void MyWindowsService::way3_GetUserNameByGetUserNameWindowsAPI()
+void MyWindowsService::way2_GetUserNameByWindowsAPI()
 {
     #ifdef Q_OS_WIN
     // Output: Windows User Name = "SYSTEM"
 
-        qInfo() << "Way 3 - Get User Name via Windows API GetUserName()...";
+        qInfo() << "Way 2 - Get User Name via Windows API GetUserName()...";
 
         wchar_t acUserName[200];
         DWORD nUserName = sizeof(acUserName);
@@ -94,6 +82,49 @@ void MyWindowsService::way3_GetUserNameByGetUserNameWindowsAPI()
 }
 
 
+
+void MyWindowsService::way3_GetActiveUserNameByWindowsAPIInSystemProcess()
+{
+    // Output: Windows User Name = "Finix"
+
+    qInfo() << "Way 3 - Get Active User Name from a system process...";
+    DWORD sessionId = WTSGetActiveConsoleSessionId();
+    qInfo() << "session id = " << sessionId;
+
+    wchar_t* ppBuffer[100];
+    DWORD bufferSize;
+    WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, sessionId, WTSUserName, ppBuffer, &bufferSize);
+    qInfo() << "Windows User Name = " << QString::fromWCharArray(*ppBuffer);
+
+    qInfo() << "---------------------------";
+}
+
+
+void MyWindowsService::way4_GetHomeLocationByQStandardPaths()
+{
+    // Output: "C:/Windows/system32/config/systemprofile"
+
+    qInfo() << "Way 4 - Get Home Location via QStandardPaths...";
+    QStringList homePath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
+    qInfo() << homePath.first().split(QDir::separator()).last();
+    qInfo() << "---------------------------";
+}
+
+
+void MyWindowsService::way5_GetHomeLocationByWindowsAPI()
+{
+    // Output: "C:\\Windows\\system32\\config\\systemprofile"
+
+    qInfo() << "Way 5 - Get Home Location via Windows API...";
+    wchar_t envVar[] = L"UserProfile";
+    wchar_t result[100];
+    GetEnvironmentVariable(envVar, result, sizeof(result)/sizeof(wchar_t));
+    qInfo() << "USER PROFILE = " << QString::fromWCharArray(result);
+    qInfo() << "---------------------------";
+}
+
+
+
 void MyWindowsService::start()
 {
     // Only for "-e" option, as message handler has not been installed
@@ -103,9 +134,11 @@ void MyWindowsService::start()
 
     qInfo() << "Start MyWindowsService...";
 
-    way1_GetUserNameByEnvVar();
-    way2_GetHomeLocationByQStandardPaths();
-    way3_GetUserNameByGetUserNameWindowsAPI();
+    way1_GetUserNameByQT();
+    way2_GetUserNameByWindowsAPI();
+    way3_GetActiveUserNameByWindowsAPIInSystemProcess();
+    way4_GetHomeLocationByQStandardPaths();
+    way5_GetHomeLocationByWindowsAPI();
 }
 
 void MyWindowsService::stop()
