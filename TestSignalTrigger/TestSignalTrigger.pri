@@ -1,1 +1,1 @@
-DESTDIR = $$PWD/../build
+DESTDIR = $$PWD/build

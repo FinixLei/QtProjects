@@ -11,6 +11,7 @@ MyService::MyService(int argc, char **argv)
 void MyService::start()
 {
     QCoreApplication* app = application();
+    Q_UNUSED(app);
 
     daemon = new MyDaemon();
 

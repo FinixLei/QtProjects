@@ -21,7 +21,6 @@ LIBS += \
     -L$$DESTDIR \
     -lPluginOne \
     -lPluginTwo \
-    -L$$PWD/windows_libs \
     -lWtsApi32 \
     -lAdvApi32 \
     -lUserEnv
