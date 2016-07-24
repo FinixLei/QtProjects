@@ -3,6 +3,7 @@
 
 #include <QFile>
 
+namespace message_handler {
 class  MessageHandler
 {
 private:
@@ -16,6 +17,7 @@ public:
 private:
     static QString s_log;
 };
+}
 
 
 #endif // MESSAGEHANDLER_H

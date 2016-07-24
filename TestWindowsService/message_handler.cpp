@@ -7,6 +7,8 @@
 
 #include "message_handler.h"
 
+using namespace message_handler;
+
 
 QString MessageHandler::s_log = "mws.log";
 
