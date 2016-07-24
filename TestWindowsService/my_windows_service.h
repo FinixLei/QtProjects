@@ -21,6 +21,7 @@ private:
     void way3_GetActiveUserNameByWindowsAPIInSystemProcess();
     void way4_GetHomeLocationByQStandardPaths();
     void way5_GetHomeLocationByWindowsAPI();
+    void way6_GetHomeLoactioneByWTS();
 };
 
 #endif // MYWINDOWSSERVICE_H

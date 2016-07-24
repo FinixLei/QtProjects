@@ -124,6 +124,28 @@ void MyWindowsService::way5_GetHomeLocationByWindowsAPI()
 }
 
 
+void MyWindowsService::way6_GetHomeLoactioneByWTS()
+{
+    // Output:
+
+    qInfo() << "Way 6 - Get Home Location via WTS technique...";
+    DWORD sessionId = WTSGetActiveConsoleSessionId();
+    qInfo() << "Session ID = " << sessionId;
+    wchar_t* ppBuffer[100];
+    DWORD bufferSize;
+
+    WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, sessionId, WTSWorkingDirectory, ppBuffer, &bufferSize);
+    qInfo() << "Working Directory = " << QString::fromWCharArray(*ppBuffer);  // Empty ""
+
+    WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, sessionId, WTSClientDirectory, ppBuffer, &bufferSize);
+    qInfo() << "Client Directory = " << QString::fromWCharArray(*ppBuffer);  // Empty ""
+
+    WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, sessionId, WTSUserName, ppBuffer, &bufferSize);
+    qInfo() << "Windows User Name = " << QString::fromWCharArray(*ppBuffer);  // Right user name
+
+    qInfo() << "---------------------------";
+}
+
 
 void MyWindowsService::start()
 {
@@ -139,6 +161,7 @@ void MyWindowsService::start()
     way3_GetActiveUserNameByWindowsAPIInSystemProcess();
     way4_GetHomeLocationByQStandardPaths();
     way5_GetHomeLocationByWindowsAPI();
+    way6_GetHomeLoactioneByWTS();
 }
 
 void MyWindowsService::stop()
