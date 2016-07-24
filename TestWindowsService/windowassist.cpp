@@ -174,7 +174,7 @@ public:
 
 /**************************************************************************************************/
 
-LPCWSTR WindowAssistImpl::m_windowName = L"Sprout event handler";
+LPCWSTR WindowAssistImpl::m_windowName = L"Event handler";
 HWND WindowAssistImpl::m_windowHandle = NULL;
 WindowAssist* WindowAssistImpl::m_windowAssist = nullptr;
 
