@@ -9,6 +9,18 @@
 #include "Wtsapi32.h"
 
 
+void GetActiveUserName()
+{
+    DWORD sessionId = WTSGetActiveConsoleSessionId();
+    qInfo() << "session id = " << sessionId;
+
+    wchar_t* ppBuffer[100];
+    DWORD bufferSize;
+    WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, sessionId, WTSUserName, ppBuffer, &bufferSize);
+    qInfo() << "Windows User Name = " << QString::fromWCharArray(*ppBuffer);
+}
+
+
 class WindowAssistImpl
 {
     WindowAssistImpl() = delete;
@@ -31,6 +43,8 @@ public:
                 {
                     qDebug() << "Capture user logon event.";
                     emit m_windowAssist->logon();
+
+                    GetActiveUserName();
                 }
                 break;
             case WTS_SESSION_LOGOFF:
@@ -52,6 +66,8 @@ public:
                 {
                     qDebug() << "Capture user unlock event.";
                     emit m_windowAssist->unlocked();
+
+                    GetActiveUserName();
                 }
                 break;
             }
