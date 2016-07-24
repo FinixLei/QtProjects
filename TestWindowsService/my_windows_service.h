@@ -2,6 +2,7 @@
 #define MYWINDOWSSERVICE_H
 
 #include "qtservice.h"
+#include "windowassist.h"
 
 class MyWindowsService: public QtService<QCoreApplication>, public QObject
 {
@@ -22,6 +23,9 @@ private:
     void way4_GetHomeLocationByQStandardPaths();
     void way5_GetHomeLocationByWindowsAPI();
     void way6_GetHomeLoactioneByWTS();
+
+private:
+    WindowAssist* m_windowAssist;
 };
 
 #endif // MYWINDOWSSERVICE_H

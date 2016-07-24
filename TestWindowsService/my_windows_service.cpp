@@ -18,6 +18,8 @@ MyWindowsService::MyWindowsService(int argc, char** argv)
 {
     setServiceDescription("This is my Windows Service");
     setServiceFlags(QtServiceBase::CanBeSuspended);
+
+    m_windowAssist = new WindowAssist(this);
 }
 
 

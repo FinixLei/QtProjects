@@ -23,18 +23,21 @@ CONFIG(debug, debug|release) {
 
 LIBS += -ladvapi32 \
         -lkernel32 \
-        -lWtsapi32
+        -lWtsapi32 \
+        -lUser32
 
 INCLUDEPATH += $$PWD/qt-service-lib/include
 
 SOURCES += main.cpp \
     my_windows_service.cpp \
-    message_handler.cpp
+    message_handler.cpp \
+    windowassist.cpp
 
 HEADERS += \
     my_windows_service.h \
     qt-service-lib/include/qtservice.h \
-    message_handler.h
+    message_handler.h \
+    windowassist.h
 
 DISTFILES += \
     TestWindowsService.pri
