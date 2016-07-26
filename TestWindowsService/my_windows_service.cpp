@@ -8,6 +8,7 @@
 #ifdef Q_OS_WIN
 #include <windows.h>
 #include <Wtsapi32.h>
+#include <UserEnv.h>
 #endif
 
 #include <QProcess>
@@ -128,8 +129,6 @@ void MyWindowsService::way5_GetHomeLocationByWindowsAPI()
 
 void MyWindowsService::way6_GetHomeLoactioneByWTS()
 {
-    // Output:
-
     qInfo() << "Way 6 - Get Home Location via WTS technique...";
     DWORD sessionId = WTSGetActiveConsoleSessionId();
     qInfo() << "Session ID = " << sessionId;
@@ -142,8 +141,32 @@ void MyWindowsService::way6_GetHomeLoactioneByWTS()
     WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, sessionId, WTSClientDirectory, ppBuffer, &bufferSize);
     qInfo() << "Client Directory = " << QString::fromWCharArray(*ppBuffer);  // Empty ""
 
-    WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, sessionId, WTSUserName, ppBuffer, &bufferSize);
-    qInfo() << "Windows User Name = " << QString::fromWCharArray(*ppBuffer);  // Right user name
+    qInfo() << "---------------------------";
+}
+
+void MyWindowsService::way7_GetEnvironmentVariables()
+{
+    qInfo() << "Way 7 - Get Environment Variables by Windows API CreateEnvironmentBlock()...";
+
+    DWORD sessionId = WTSGetActiveConsoleSessionId();
+    qInfo() << "Session ID = " << sessionId;
+
+    HANDLE token;
+    if (!WTSQueryUserToken(sessionId, &token))
+    {
+        qCritical() << "Failed to get the user token of session " << sessionId;
+    }
+
+
+    wchar_t* pEnv = NULL;
+    if (CreateEnvironmentBlock((void**)&pEnv, token, TRUE))
+    {
+        while (*pEnv) {
+            // printf("%ls\n", pEnv);
+            qInfo() << QString::fromWCharArray(pEnv);
+            pEnv += wcslen(pEnv) + 1;
+        }
+    }
 
     qInfo() << "---------------------------";
 }
@@ -164,6 +187,7 @@ void MyWindowsService::start()
     way4_GetHomeLocationByQStandardPaths();
     way5_GetHomeLocationByWindowsAPI();
     way6_GetHomeLoactioneByWTS();
+    way7_GetEnvironmentVariables();
 }
 
 void MyWindowsService::stop()

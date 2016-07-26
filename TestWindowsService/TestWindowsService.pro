@@ -24,7 +24,8 @@ CONFIG(debug, debug|release) {
 LIBS += -ladvapi32 \
         -lkernel32 \
         -lWtsapi32 \
-        -lUser32
+        -lUser32 \
+        -lUserEnv
 
 INCLUDEPATH += $$PWD/qt-service-lib/include
 
