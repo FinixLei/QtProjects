@@ -5,12 +5,6 @@
 #include "message_handler.h"
 #include "my_windows_service.h"
 
-#ifdef Q_OS_WIN
-#include <windows.h>
-#include <Wtsapi32.h>
-#include <UserEnv.h>
-#endif
-
 #include <QProcess>
 
 
@@ -155,8 +149,9 @@ void MyWindowsService::way7_GetEnvironmentVariables()
     if (!WTSQueryUserToken(sessionId, &token))
     {
         qCritical() << "Failed to get the user token of session " << sessionId;
+        qInfo() << "---------------------------";
+        return;
     }
-
 
     wchar_t* pEnv = NULL;
     if (CreateEnvironmentBlock((void**)&pEnv, token, TRUE))
@@ -169,6 +164,86 @@ void MyWindowsService::way7_GetEnvironmentVariables()
     }
 
     qInfo() << "---------------------------";
+}
+
+LONG MyWindowsService::GetStringRegKey(HKEY hKey, const std::wstring &strValueName, std::wstring &strValue, const std::wstring &strDefaultValue)
+{
+    strValue = strDefaultValue;
+    WCHAR szBuffer[512];
+    DWORD dwBufferSize = sizeof(szBuffer);
+    ULONG nError;
+    nError = RegQueryValueExW(hKey, strValueName.c_str(), 0, NULL, (LPBYTE)szBuffer, &dwBufferSize);
+    if (ERROR_SUCCESS == nError)
+    {
+        strValue = szBuffer;
+    }
+    return nError;
+}
+
+void MyWindowsService::way8_GetUserRegistry()
+{
+#ifdef Q_OS_WIN
+
+    DWORD sessionId = WTSGetActiveConsoleSessionId();
+    qInfo() << "Session ID = " << sessionId;
+
+    wchar_t * ppUserName[100];
+    DWORD sizeOfUserName;
+    WTSQuerySessionInformation(WTS_CURRENT_SERVER_HANDLE, sessionId, WTSUserName, ppUserName, &sizeOfUserName);
+    qInfo() << "Windows User Name = " << QString::fromWCharArray(*ppUserName);
+
+    std::wstring strValueOfBinDir = L"Unknown Value";
+    LONG regOpenResult = ERROR_SUCCESS;
+
+    HANDLE hUserToken = NULL;
+    HANDLE hFakeToken = NULL;
+
+    if (WTSQueryUserToken(sessionId, &hUserToken))
+    {
+         if (DuplicateTokenEx(hUserToken, TOKEN_ASSIGN_PRIMARY | TOKEN_ALL_ACCESS, 0, SecurityImpersonation, TokenPrimary, &hFakeToken) == TRUE)
+         {
+            qInfo() << "Before ImpersonateLoggedOnUser()......";
+            if (ImpersonateLoggedOnUser(hFakeToken))
+            {
+                HKEY hKey;
+
+                regOpenResult = RegOpenCurrentUser(KEY_READ, &hKey);
+                if (regOpenResult != ERROR_SUCCESS)
+                {
+                    qCritical() << "Failed to call RegOpenCurrentUser(), Error is " << regOpenResult;
+                }
+
+                HKEY hSubKey;
+
+                RegOpenKeyEx(hKey,
+                             TEXT("Software\\Baidu\\BaiduYunGuanjia"),
+                             0,
+                             KEY_READ,
+                             &hSubKey);
+                GetStringRegKey(hSubKey, TEXT("installDir"), strValueOfBinDir, TEXT("Unknown"));
+
+                RevertToSelf();
+            }
+            else
+            {
+                qCritical() << "Failed to ImpersonateLoggedOnUser...";
+            }
+            CloseHandle(hFakeToken);
+        }
+        else
+        {
+            qCritical() << "Failed to call DuplicateTokenEx...";
+        }
+        CloseHandle(hUserToken);
+    }
+    else
+    {
+        qCritical() << "Failed to get the user token of session " << sessionId;
+    }
+
+    qInfo() << "The value of Registry is " << QString::fromWCharArray( strValueOfBinDir.c_str() );
+
+#endif
 }
 
 
@@ -188,6 +263,7 @@ void MyWindowsService::start()
     way5_GetHomeLocationByWindowsAPI();
     way6_GetHomeLoactioneByWTS();
     way7_GetEnvironmentVariables();
+    way8_GetUserRegistry();
 }
 
 void MyWindowsService::stop()

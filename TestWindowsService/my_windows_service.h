@@ -4,6 +4,13 @@
 #include "qtservice.h"
 #include "windowassist.h"
 
+#ifdef Q_OS_WIN
+#include <tchar.h>
+#include <windows.h>
+#include <Wtsapi32.h>
+#include <UserEnv.h>
+#endif
+
 class MyWindowsService: public QtService<QCoreApplication>, public QObject
 {
 public:
@@ -16,6 +23,12 @@ protected:
     void stop();
 
 private:
+    LONG GetStringRegKey(HKEY hKey,
+                         const std::wstring &strValueName,
+                         std::wstring &strValue,
+                         const std::wstring &strDefaultValue);
+
+private:
     void installMessageHandler();
     void way1_GetUserNameByQT();
     void way2_GetUserNameByWindowsAPI();
@@ -24,6 +37,7 @@ private:
     void way5_GetHomeLocationByWindowsAPI();
     void way6_GetHomeLoactioneByWTS();
     void way7_GetEnvironmentVariables();
+    void way8_GetUserRegistry();
 
 private:
     WindowAssist* m_windowAssist;

@@ -9,6 +9,8 @@ TEMPLATE = app
 
 DESTDIR = $$PWD/build/$$PROJ_SPEC
 
+DEFINES += _UNICODE
+
 CONFIG += c++11 \
           console
 CONFIG -= app_bundle
