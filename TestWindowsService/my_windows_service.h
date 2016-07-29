@@ -23,12 +23,6 @@ protected:
     void stop();
 
 private:
-    LONG GetStringRegKey(HKEY hKey,
-                         const std::wstring &strValueName,
-                         std::wstring &strValue,
-                         const std::wstring &strDefaultValue);
-
-private:
     void installMessageHandler();
     void way1_GetUserNameByQT();
     void way2_GetUserNameByWindowsAPI();

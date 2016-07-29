@@ -166,7 +166,7 @@ void MyWindowsService::way7_GetEnvironmentVariables()
     qInfo() << "---------------------------";
 }
 
-LONG MyWindowsService::GetStringRegKey(HKEY hKey, const std::wstring &strValueName, std::wstring &strValue, const std::wstring &strDefaultValue)
+static LONG GetStringRegKey(HKEY hKey, const std::wstring &strValueName, std::wstring &strValue, const std::wstring &strDefaultValue)
 {
     strValue = strDefaultValue;
     WCHAR szBuffer[512];
@@ -178,6 +178,32 @@ LONG MyWindowsService::GetStringRegKey(HKEY hKey, const std::wstring &strValueNa
         strValue = szBuffer;
     }
     return nError;
+}
+
+static void GetUserRegistryHive()
+{
+    std::wstring strValueOfBinDir = L"Unknown Value";
+    LONG regOpenResult = ERROR_SUCCESS;
+
+    HKEY hKey;
+
+    regOpenResult = RegOpenCurrentUser(KEY_READ, &hKey);
+    if (regOpenResult != ERROR_SUCCESS)
+    {
+        qCritical() << "Failed to call RegOpenCurrentUser(), Error is " << regOpenResult;
+    }
+
+    HKEY hSubKey;
+
+    RegOpenKeyEx(hKey,
+                 TEXT("Software\\Baidu\\BaiduYunGuanjia"),
+                 0,
+                 KEY_READ,
+                 &hSubKey);
+    GetStringRegKey(hSubKey, TEXT("installDir"), strValueOfBinDir, TEXT("Unknown"));
+
+    qInfo() << "The value of Registry is " << QString::fromWCharArray( strValueOfBinDir.c_str() );
+
 }
 
 void MyWindowsService::way8_GetUserRegistry()
@@ -242,6 +268,9 @@ void MyWindowsService::way8_GetUserRegistry()
     }
 
     qInfo() << "The value of Registry is " << QString::fromWCharArray( strValueOfBinDir.c_str() );
+
+    // Check that after Impersonating, can get the User Registry hive or not. As expected, not.
+    GetUserRegistryHive();
 
 #endif
 }
