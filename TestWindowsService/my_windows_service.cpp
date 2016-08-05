@@ -299,9 +299,9 @@ void MyWindowsService::testKeepProcess()
     // Keep restarting if notepad.exe is finished
     QObject::connect(p, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
                      [p] (int exitCode, QProcess::ExitStatus exitStatus) {
-        qWarning() << "Notepad.exe was terminated!";
-        qWarning() << "Exit code: " << exitCode;
-        qWarning() << "Exit status: " << exitStatus;
+        qWarning() << "Notepad.exe was terminated! "
+                   << "Exit code: " << exitCode
+                   << "Exit status: " << exitStatus;
 
         // restart
         qWarning() << "Notepad.exe will restart... ";
