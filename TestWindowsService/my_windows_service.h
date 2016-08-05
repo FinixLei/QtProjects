@@ -24,6 +24,7 @@ protected:
 
 private:
     void installMessageHandler();
+
     void way1_GetUserNameByQT();
     void way2_GetUserNameByWindowsAPI();
     void way3_GetActiveUserNameByWindowsAPIInSystemProcess();
@@ -32,6 +33,9 @@ private:
     void way6_GetHomeLoactioneByWTS();
     void way7_GetEnvironmentVariables();
     void way8_GetUserRegistry();
+    void testUserStuff();
+
+    void testKeepProcess();
 
 private:
     WindowAssist* m_windowAssist;

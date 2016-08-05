@@ -275,6 +275,42 @@ void MyWindowsService::way8_GetUserRegistry()
 #endif
 }
 
+void MyWindowsService::testUserStuff()
+{
+    way1_GetUserNameByQT();
+    way2_GetUserNameByWindowsAPI();
+    way3_GetActiveUserNameByWindowsAPIInSystemProcess();
+    way4_GetHomeLocationByQStandardPaths();
+    way5_GetHomeLocationByWindowsAPI();
+    way6_GetHomeLoactioneByWTS();
+    way7_GetEnvironmentVariables();
+    way8_GetUserRegistry();
+}
+
+void MyWindowsService::testKeepProcess()
+{
+    QProcess* p = new QProcess(); // leaking on pourpose
+    p->setProcessChannelMode(QProcess::MergedChannels);
+
+    QObject::connect(p, &QProcess::started, [] () {
+        qDebug() << "Notepad.exe started!";
+    });
+
+    // Keep restarting if notepad.exe is finished
+    QObject::connect(p, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+                     [p] (int exitCode, QProcess::ExitStatus exitStatus) {
+        qWarning() << "Notepad.exe was terminated!";
+        qWarning() << "Exit code: " << exitCode;
+        qWarning() << "Exit status: " << exitStatus;
+
+        // restart
+        qWarning() << "Notepad.exe will restart... ";
+        p->start();
+    });
+
+    p->start("notepad.exe");
+}
+
 
 void MyWindowsService::start()
 {
@@ -285,14 +321,9 @@ void MyWindowsService::start()
 
     qInfo() << "Start MyWindowsService...";
 
-    way1_GetUserNameByQT();
-    way2_GetUserNameByWindowsAPI();
-    way3_GetActiveUserNameByWindowsAPIInSystemProcess();
-    way4_GetHomeLocationByQStandardPaths();
-    way5_GetHomeLocationByWindowsAPI();
-    way6_GetHomeLoactioneByWTS();
-    way7_GetEnvironmentVariables();
-    way8_GetUserRegistry();
+    // testUserStuff();
+
+    testKeepProcess();  // Keep restarting "notepad.exe" in case found that it is finished.
 }
 
 void MyWindowsService::stop()
